@@ -22,6 +22,12 @@ return function (ContainerBuilder $containerBuilder) {
     $container[UsersModelInterface::class] = DI\autowire(UsersModel::class);
     $container[CreateUserController::class] = DI\autowire(CreateUserController::class);
     $container[LoginController::class] = DI\autowire(LoginController::class);
-    $container[JWTMiddleware::class] = DI\autowire(JWTMiddleware::class);
     $containerBuilder->addDefinitions($container);
+    $containerBuilder->addDefinitions([
+        JWTMiddleware::class => function ($container)
+        {
+            $settings = $container->get('settings');
+            return new JWTMiddleware($settings);
+        }
+    ]);
 };
