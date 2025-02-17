@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Validation\UserValidation;
 
-class CreateUserController extends Controller
+class UserController extends Controller
 {
     private UsersModelInterface $model;
 
