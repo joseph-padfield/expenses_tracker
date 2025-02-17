@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 use DI\ContainerBuilder;
 use Monolog\Logger;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 return function (ContainerBuilder $containerBuilder) {
     // Global Settings Object
@@ -18,11 +22,14 @@ return function (ContainerBuilder $containerBuilder) {
                 'level' => Logger::DEBUG,
             ],
             'db' => [
-                'host' => 'mysql:host=127.0.0.1;',
-                'name' => 'dbname=example',
-                'user' => 'root',
-                'password' => 'password',
+                'host' => $_ENV['HOST'],
+                'name' => $_ENV['NAME'],
+                'user' => $_ENV['USER'],
+                'password' => $_ENV['PASSWORD'],
                 'debug' => true
+            ],
+            'jwt' => [
+                'secret' => $_ENV['JWT_SECRET'],
             ]
         ],
     ]);
