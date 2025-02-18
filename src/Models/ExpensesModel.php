@@ -36,21 +36,23 @@ class ExpensesModel implements ExpensesModelInterface
         return $expense ?: null;
     }
 
-    public function createExpense(int $userId, int $categoryId, float $amount, string $date): bool
+    public function createExpense(int $userId, int $categoryId, float $amount, string $description, string $date): bool
     {
-        $sql = $this->db->prepare('INSERT INTO expenses (user_id, category_id, amount, date) VALUES (:user_id, :category_id, :amount, :date)');
+        $sql = $this->db->prepare('INSERT INTO expenses (user_id, category_id, amount, description, date) VALUES (:user_id, :category_id, :amount, :description, :date)');
         $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
         $sql->bindParam(":category_id", $categoryId, PDO::PARAM_INT);
         $sql->bindParam(":amount", $amount, PDO::PARAM_STR);
+        $sql->bindParam(":description", $description, PDO::PARAM_STR);
         $sql->bindParam(":date", $date, PDO::PARAM_STR);
         return $sql->execute();
     }
 
-    public function updateExpense(int $expenseId, int $userId, int $categoryId, float $amount, string $date): bool
+    public function updateExpense(int $expenseId, int $userId, int $categoryId, float $amount, string $description, string $date): bool
     {
-        $sql = $this->db->prepare('UPDATE expenses SET category = :category, amount = :amount, date = :date WHERE id = :id AND user_id = :user_id');
+        $sql = $this->db->prepare('UPDATE expenses SET category = :category, amount = :amount, description = :description, date = :date WHERE id = :id AND user_id = :user_id');
         $sql->bindParam(":category_id", $categoryId, PDO::PARAM_INT);
         $sql->bindParam(":amount", $amount, PDO::PARAM_STR);
+        $sql->bindParam(":description", $description, PDO::PARAM_STR);
         $sql->bindParam(":date", $date, PDO::PARAM_STR);
         $sql->bindParam(":id", $expenseId, PDO::PARAM_INT);
         $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);

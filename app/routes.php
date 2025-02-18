@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\CategoriesController;
 use App\Controllers\LoginController;
 use Slim\App;
 use Slim\Views\PhpRenderer;
@@ -44,5 +45,7 @@ return function (App $app) {
     })->add($container->get(JWTMiddleware::class));
 
 //    categories routes
-
+    $app->group('/categories', function (Group $group) use ($container) {
+        $group->get('', [$container->get(CategoriesController::class), 'getCategories']);
+    });
 };

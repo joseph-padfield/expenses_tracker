@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Abstracts\Controller;
@@ -21,6 +23,11 @@ class UserController extends Controller
     {
         $data = $request->getParsedBody();
         $error = UserValidation::validateRegister($data);
+
+        if ($error)
+        {
+            return $this->respondWithJson($response, $error);
+        }
 
         $name = $data['name'] ?? null;
         $email = $data['email'] ?? null;

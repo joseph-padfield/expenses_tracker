@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Factories\LoggerFactory;
 use App\Factories\PDOFactory;
 use App\Factories\RendererFactory;
+use App\Models\CategoriesModel;
 use App\Models\ExpensesModel;
 use App\Models\UsersModel;
 use DI\ContainerBuilder;
@@ -15,6 +16,8 @@ use App\Controllers\LoginController;
 use App\Middleware\JWTMiddleware;
 use App\Interfaces\ExpensesModelInterface;
 use App\Controllers\ExpensesController;
+use App\Interfaces\CategoriesModelInterface;
+use App\Controllers\CategoriesController;
 
 return function (ContainerBuilder $containerBuilder) {
     $container = [];
@@ -24,9 +27,11 @@ return function (ContainerBuilder $containerBuilder) {
     $container[PDO::class] = DI\factory(PDOFactory::class);
     $container[UsersModelInterface::class] = DI\autowire(UsersModel::class);
     $container[ExpensesModelInterface::class] = DI\autowire(ExpensesModel::class);
+    $container[CategoriesModelInterface::class] = DI\autowire(CategoriesModel::class);
     $container[UserController::class] = DI\autowire(UserController::class);
     $container[LoginController::class] = DI\autowire(LoginController::class);
     $container[ExpensesController::class] = DI\autowire(ExpensesController::class);
+    $container[CategoriesController::class] = DI\autowire(CategoriesController::class);
     $containerBuilder->addDefinitions($container);
     $containerBuilder->addDefinitions([
         JWTMiddleware::class => function ($container)

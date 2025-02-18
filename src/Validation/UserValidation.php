@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Validation;
 
-class UserValidation
+use App\Abstracts\Validation;
+
+class UserValidation extends Validation
 {
     public static function validateRegister(array $data): ?string
     {
@@ -20,7 +22,7 @@ class UserValidation
             return "Password must be at least 8 characters.";
         }
 
-        return null; // No validation errors
+        return null;
     }
 
     public static function validateLogin(array $data): ?string
@@ -37,26 +39,15 @@ class UserValidation
             return "Password must be at least 8 characters.";
         }
 
-        return null; // No validation errors
-    }
-
-    private static function validateRequiredFields(array $data, array $requiredFields): ?string
-    {
-        foreach ($requiredFields as $field) {
-            if (empty($data[$field])) {
-                return "The field '$field' is required.";
-            }
-        }
         return null;
     }
 
-    private static function isValidEmail(string $email): bool
+    public static function validateUser(int $user, array $data): ?string
     {
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-    }
-
-    private static function isValidPassword(string $password): bool
-    {
-        return strlen($password) >= 8;
+        if ($user !== $data['user_id'])
+        {
+            return 'Invalid user ID.';
+        }
+        return null;
     }
 }
