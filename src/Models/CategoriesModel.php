@@ -22,7 +22,7 @@ class CategoriesModel implements CategoriesModelInterface
     {
         $sql = $this->db->prepare("SELECT * FROM categories");
         $sql->execute();
-        return $sql->fetchAll();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

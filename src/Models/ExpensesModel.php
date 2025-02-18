@@ -20,7 +20,11 @@ class ExpensesModel implements ExpensesModelInterface
 
     public function getExpenses(int $userId): array
     {
-        $sql = $this->db->prepare("SELECT * FROM `expenses` WHERE `user_id` = :user_id");
+        $sql = $this->db->prepare("
+            SELECT expenses.*, categories.name AS category_name                                            
+            FROM `expenses` 
+            JOIN `categories` ON expenses.category_id = categories.id
+            WHERE expenses.user_id = :user_id");
         $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -28,7 +32,11 @@ class ExpensesModel implements ExpensesModelInterface
 
     public function getExpenseById(int $expenseId, int $userId): ?array
     {
-        $sql = $this->db->prepare("SELECT * FROM `expenses` WHERE `id` = :id AND `user_id` = :user_id");
+        $sql = $this->db->prepare("
+            SELECT expenses.*, categories.name 
+            FROM `expenses` 
+            JOIN `categories` ON expenses.category_id = categories.id
+            WHERE expenses.id = :id AND expenses.user_id = :user_id");
         $sql->bindParam(":id", $expenseId, PDO::PARAM_INT);
         $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
         $sql->execute();
@@ -65,5 +73,14 @@ class ExpensesModel implements ExpensesModelInterface
         $sql->bindParam(":id", $expenseId, PDO::PARAM_INT);
         $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
         return $sql->execute();
+    }
+
+    public function getTotalExpenses(int $userId): float
+    {
+        $sql = $this->db->prepare("
+        SELECT COALESCE(SUM(amount), 0) AS total FROM expenses WHERE user_id = :user_id");
+        $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
+        $sql->execute();
+        return (float) $sql->fetchColumn();
     }
 }

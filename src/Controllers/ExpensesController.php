@@ -57,7 +57,6 @@ class ExpensesController extends Controller
             return $this->respondWithJson($response, ['message' => array_values($error)]);
         }
 
-        // Validate required fields
         $category = $data['category'];
         $amount = $data['amount'];
         $description = $data['description'];
@@ -67,8 +66,6 @@ class ExpensesController extends Controller
         {
             return $this->respondWithJson($response, ['error' => 'All fields are required.']);
         }
-
-
 
         $created = $this->model->createExpense($user->sub, $data['category'], (float) $data['amount'], $data['description'], $data['date']);
 
@@ -82,15 +79,18 @@ class ExpensesController extends Controller
     public function updateExpense(Request $request, Response $response, array $args): Response
     {
         $user = $request->getAttribute('user');
+        $userId = (int) $user->sub;
         $expenseId = (int) $args['id'];
         $data = $request->getParsedBody();
 
-        if (!isset($data['category'], $data['amount'], $data['date'])) {
-            return $this->respondWithJson($response, ['error' => 'Missing required fields'], 400);
-        }
+        $error = array_filter([
+            ExpensesValidation::validateData($data),
+            UserValidation::validateUser($userId, $data)
+        ]);
 
-        if (!is_numeric($data['amount']) || $data['amount'] <= 0) {
-            return $this->respondWithJson($response, ['error' => 'Amount must be a positive number'], 400);
+        if (!empty($error))
+        {
+            return $this->respondWithJson($response, ['message' => array_values($error)]);
         }
 
         $updated = $this->model->updateExpense($expenseId, $user->sub, $data['category'], (float) $data['amount'], $data['description'], $data['date']);
@@ -105,7 +105,17 @@ class ExpensesController extends Controller
     public function deleteExpense(Request $request, Response $response, array $args): Response
     {
         $user = $request->getAttribute('user');
+        $userId = (int) $user->sub;
         $expenseId = (int) $args['id'];
+
+        $error = array_filter([
+            UserValidation::validateUser($userId, $args)
+        ]);
+
+        if (!empty($error))
+        {
+            return $this->respondWithJson($response, ['message' => array_values($error)]);
+        }
 
         $deleted = $this->model->deleteExpense($expenseId, $user->sub);
         if (!$deleted) {
@@ -114,4 +124,13 @@ class ExpensesController extends Controller
 
         return $this->respondWithJson($response, ['message' => 'Expense deleted successfully']);
     }
+
+    public function getTotalExpenses(Request $request, Response $response): Response
+    {
+        $user = $request->getAttribute('user');
+        $total = $this->model->getTotalExpenses($user->sub);
+        return $this->respondWithJson($response, ['total_expenses' => $total]);
+    }
+
+
 }

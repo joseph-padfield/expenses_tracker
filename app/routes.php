@@ -38,6 +38,7 @@ return function (App $app) {
 //    expenses routes
     $app->group('/expenses', function (Group $group) use ($container) {
         $group->get('', [$container->get(ExpensesController::class), 'getExpenses']);
+        $group->get('/total', [$container->get(ExpensesController::class), 'getTotalExpenses']);
         $group->get('/{id}', [$container->get(ExpensesController::class), 'getExpense']);
         $group->post('', [$container->get(ExpensesController::class), 'createExpense']);
         $group->put('/{id}', [$container->get(ExpensesController::class), 'updateExpense']);
