@@ -132,5 +132,19 @@ class ExpensesController extends Controller
         return $this->respondWithJson($response, ['total_expenses' => $total]);
     }
 
+    public function getTotalExpensesByCategory (Request $request, Response $response): Response
+    {
+        $user = $request->getAttribute('user');
+        $expenses = $this->model->getTotalExpensesByCategory($user->sub);
+        return $this->respondWithJson($response, ['total_expenses_by_category' => $expenses]);
+    }
+
+    public function getTotalExpensesByMonth(Request $request, Response $response): Response
+    {
+        $user = $request->getAttribute('user');
+        $expenses = $this->model->getTotalExpensesByMonth($user->sub);
+        return $this->respondWithJson($response, ['total_expenses_by_month' => $expenses]);
+    }
+
 
 }

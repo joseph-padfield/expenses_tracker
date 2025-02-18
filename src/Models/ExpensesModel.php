@@ -77,10 +77,29 @@ class ExpensesModel implements ExpensesModelInterface
 
     public function getTotalExpenses(int $userId): float
     {
-        $sql = $this->db->prepare("
-        SELECT COALESCE(SUM(amount), 0) AS total FROM expenses WHERE user_id = :user_id");
+        $sql = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM expenses WHERE user_id = :user_id");
         $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
         $sql->execute();
         return (float) $sql->fetchColumn();
+    }
+
+    public function getTotalExpensesByCategory(int $userId): array
+    {
+        $sql = $this->db->prepare("
+        SELECT categories.name AS category_name, COALESCE(SUM(amount), 0) AS total
+        FROM expenses 
+        JOIN categories ON expenses.category_id = categories.id
+        WHERE expenses.user_id = :user_id
+        GROUP BY category_name
+        ORDER BY total DESC
+        ");
+        $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalExpensesByMonth(int $userId): array
+    {
+
     }
 }
