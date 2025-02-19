@@ -40,6 +40,7 @@ return function (App $app) {
         $group->get('', [$container->get(ExpensesController::class), 'getExpenses']);
         $group->get('/total', [$container->get(ExpensesController::class), 'getTotalExpenses']);
         $group->get('/total/category', [$container->get(ExpensesController::class), 'getTotalExpensesByCategory']);
+        $group->get('/total/month', [$container->get(ExpensesController::class), 'getTotalExpensesByMonth']);
         $group->get('/{id}', [$container->get(ExpensesController::class), 'getExpense']);
         $group->post('', [$container->get(ExpensesController::class), 'createExpense']);
         $group->put('/{id}', [$container->get(ExpensesController::class), 'updateExpense']);

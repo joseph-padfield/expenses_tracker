@@ -100,6 +100,15 @@ class ExpensesModel implements ExpensesModelInterface
 
     public function getTotalExpensesByMonth(int $userId): array
     {
-
+        $sql = $this->db->prepare("
+        SELECT DATE_FORMAT(expenses.date, '%Y-%m') AS month, COALESCE(SUM(expenses.amount), 0) AS total
+        FROM expenses 
+        WHERE expenses.user_id = :user_id
+        GROUP BY month
+        ORDER BY month DESC;
+        ");
+        $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
+        $sql->execute();
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 }
