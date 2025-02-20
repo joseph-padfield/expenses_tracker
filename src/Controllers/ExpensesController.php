@@ -82,6 +82,7 @@ class ExpensesController extends Controller
         $userId = (int) $user->sub;
         $expenseId = (int) $args['id'];
         $data = $request->getParsedBody();
+        $data['expense_id'] = $expenseId;
 
         $error = array_filter([
             ExpensesValidation::validateData($data),
@@ -107,6 +108,7 @@ class ExpensesController extends Controller
         $user = $request->getAttribute('user');
         $userId = (int) $user->sub;
         $expenseId = (int) $args['id'];
+        $args['user_id'] = $userId;
 
         $error = array_filter([
             UserValidation::validateUser($userId, $args)

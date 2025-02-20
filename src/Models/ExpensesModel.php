@@ -57,7 +57,7 @@ class ExpensesModel implements ExpensesModelInterface
 
     public function updateExpense(int $expenseId, int $userId, int $categoryId, float $amount, string $description, string $date): bool
     {
-        $sql = $this->db->prepare('UPDATE expenses SET category = :category, amount = :amount, description = :description, date = :date WHERE id = :id AND user_id = :user_id');
+        $sql = $this->db->prepare('UPDATE expenses SET category_id = :category_id, amount = :amount, description = :description, date = :date WHERE id = :id AND user_id = :user_id');
         $sql->bindParam(":category_id", $categoryId, PDO::PARAM_INT);
         $sql->bindParam(":amount", $amount, PDO::PARAM_STR);
         $sql->bindParam(":description", $description, PDO::PARAM_STR);
