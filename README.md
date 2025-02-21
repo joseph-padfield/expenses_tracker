@@ -1,38 +1,41 @@
-# Slim Framework 4 Skeleton Application
+# Expenses Tracker
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 4 application. This application uses the latest Slim 4 with Slim PSR-7 implementation and PHP-DI container implementation along with the PHP-View template renderer. It also uses the Monolog logger.
+#### A web-based application built using Slim that allows users to track their expenses efficiently. The system enables users to add, edit, delete, and categorize expenses, providing insights into their spending habits.
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+## Features
 
-## Install the Application
+- User authentication (login, registration, password reset)
 
-Create a new directory with your project name, e.g:
+- Add, update, and delete expenses
+
+- Categorization of expenses
+
+# Routes
+
+### /users/register
+- POST
+
+### /users/login
+- POST
+
+### /expenses
+- GET
+- POST
+
+### /expenses/total
+- GET
+
+### /expenses/total/category
+- GET
+
+### /expenses/total/month
+- GET
+
+### expenses/{id}
+- PUT
+- DELETE
+
+### /categories
+- GET
 
 
-```bash
-mkdir academyProject
-```
-
-Once inside the new directory, clone this repo:
-
-```bash
-git clone git@github.com:Mayden-Academy/slim4-skeleton.git .
-```
-
-One cloned, you must install the slim components by running:
-
-```bash
-composer install
-```
-
-To run the application locally:
-```bash
-composer start
-
-```
-Run this command in the application directory to run the test suite
-```bash
-composer test
-```
-
-That's it! Now go build something cool.
