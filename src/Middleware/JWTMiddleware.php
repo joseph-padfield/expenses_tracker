@@ -32,6 +32,7 @@ class JWTMiddleware
         }
         try {
             $decoded = JWT::decode($matches[1], new Key($this->secret, 'HS256'));
+			
             $request = $request->withAttribute("user", $decoded);
         }
         catch (\Exception $exception)

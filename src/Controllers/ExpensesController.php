@@ -49,7 +49,6 @@ class ExpensesController extends Controller
 
         $error = array_filter([
             ExpensesValidation::validateData($data),
-            UserValidation::validateUser($userId, $data)
         ]);
 
         if (!empty($error))
@@ -67,7 +66,7 @@ class ExpensesController extends Controller
             return $this->respondWithJson($response, ['error' => 'All fields are required.']);
         }
 
-        $created = $this->model->createExpense($user->sub, $data['category'], (float) $data['amount'], $data['description'], $data['date']);
+        $created = $this->model->createExpense($userId, $data['category'], (float) $data['amount'], $data['description'], $data['date']);
 
         if (!$created) {
             return $this->respondWithJson($response, ['error' => 'Failed to create expense'], 500);
@@ -83,10 +82,11 @@ class ExpensesController extends Controller
         $expenseId = (int) $args['id'];
         $data = $request->getParsedBody();
         $data['expense_id'] = $expenseId;
-
-        $error = array_filter([
+		$args['user_id'] = $userId;
+		
+		$error = array_filter([
             ExpensesValidation::validateData($data),
-            UserValidation::validateUser($userId, $data)
+            UserValidation::validateUser($userId, $args)
         ]);
 
         if (!empty($error))
@@ -94,7 +94,7 @@ class ExpensesController extends Controller
             return $this->respondWithJson($response, ['message' => array_values($error)]);
         }
 
-        $updated = $this->model->updateExpense($expenseId, $user->sub, $data['category'], (float) $data['amount'], $data['description'], $data['date']);
+        $updated = $this->model->updateExpense($expenseId, $userId, $data['category'], (float) $data['amount'], $data['description'], $data['date']);
 
         if (!$updated) {
             return $this->respondWithJson($response, ['error' => 'Failed to update expense'], 500);
@@ -116,7 +116,7 @@ class ExpensesController extends Controller
 
         if (!empty($error))
         {
-            return $this->respondWithJson($response, ['message' => array_values($error)]);
+            return $this->respondWithJson($response, ['message' => array_values($error)], 500);
         }
 
         $deleted = $this->model->deleteExpense($expenseId, $user->sub);
@@ -124,7 +124,7 @@ class ExpensesController extends Controller
             return $this->respondWithJson($response, ['error' => 'Failed to delete expense'], 500);
         }
 
-        return $this->respondWithJson($response, ['message' => 'Expense deleted successfully']);
+        return $this->respondWithJson($response, ['message' => 'Expense deleted successfully'], 200);
     }
 
     public function getTotalExpenses(Request $request, Response $response): Response

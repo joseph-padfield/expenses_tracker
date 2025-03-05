@@ -48,6 +48,7 @@ class LoginController extends Controller
 
         return $this->respondWithJson($response, [
             'message' => 'Successfully logged in',
+			'username' => $user['name'],
             'token' => $token
         ], 200);
 
@@ -56,6 +57,7 @@ class LoginController extends Controller
     private function generateJwtToken(int $userId, string $email): string
     {
         $key = $_ENV['JWT_SECRET'];
+
         $payload = [
             "sub" => $userId,
             "email" => $email,
@@ -63,6 +65,8 @@ class LoginController extends Controller
             "exp" => time() + 3600
         ];
 
-        return JWT::encode($payload, $key, 'HS256');
+		    $token = JWT::encode($payload, $key, 'HS256');
+
+    return $token;
     }
 }

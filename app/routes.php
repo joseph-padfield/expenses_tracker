@@ -7,19 +7,30 @@ use Slim\App;
 use Slim\Views\PhpRenderer;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Middleware\JWTMiddleware;
-
 use App\Controllers\UserController;
 use App\Controllers\ExpensesController;
 
-
 return function (App $app) {
 
+    // Handle OPTIONS requests globally
+    $app->options('/{routes:.+}', function ($request, $response, $args) {
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173') // Set allowed frontend origin
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+			->withHeader('Access-Control-Allow-Credentials', 'true')
+            ->withStatus(200);
+    });
+
+    // Global CORS Middleware
     $app->add(function ($request, $handler) {
         $response = $handler->handle($request);
+
         return $response
-            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173') // Allow only frontend
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+			->withHeader('Access-Control-Allow-Credentials', 'true');
     });
 
     $container = $app->getContainer();
@@ -29,13 +40,13 @@ return function (App $app) {
         return $renderer->render($response, "index.php", $args);
     });
 
-//    users routes
+    // Users routes
     $app->group('/users', function (Group $group) use ($container) {
         $group->post('/register', [$container->get(UserController::class), 'register']);
         $group->post('/login', [$container->get(LoginController::class), 'login']);
     });
 
-//    expenses routes
+    // Expenses routes
     $app->group('/expenses', function (Group $group) use ($container) {
         $group->get('', [$container->get(ExpensesController::class), 'getExpenses']);
         $group->get('/total', [$container->get(ExpensesController::class), 'getTotalExpenses']);
@@ -47,7 +58,7 @@ return function (App $app) {
         $group->delete('/{id}', [$container->get(ExpensesController::class), 'deleteExpense']);
     })->add($container->get(JWTMiddleware::class));
 
-//    categories routes
+    // Categories routes
     $app->group('/categories', function (Group $group) use ($container) {
         $group->get('', [$container->get(CategoriesController::class), 'getCategories']);
     });
